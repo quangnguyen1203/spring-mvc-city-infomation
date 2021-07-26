@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>CITY INFORMATION</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="Responsive bootstrap 4 admin template" name="description">
+  <meta content="Coderthemes" name="author">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- App favicon -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/resource/css/jquery.dataTables.min.css">
+  <script th:src="@{/js/sweetalert2.min.js}"></script>
+
+  <!-- App css -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bootstrap-stylesheet">
+  <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-stylesheet">
+  <link rel="stylesheet" href="/resource/css/sweetalert2.min.css">
+  <script type="text/javascript" src="/resource/js/sweetalert2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+  <style>
+    #abc{
+      margin-top: 30px;
+    }
+    .error{
+      color: red;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<form id="addNewCity">
+  <div class="container">
+    <h1>City Information</h1>
+    <div class="row">
+      <div class="form-group col-lg-6">
+        <label>City Name</label>
+        <input type="text" class="form-control" name="name" id="name" placeholder="Enter your city name">
+      </div>
+      <div class="form-group col-lg-6">
+        <label>Acreage</label>
+        <input type="text" class="form-control" name="acreage" id="acreage" placeholder="Enter your acreage">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-lg-6">
+        <label>Population</label>
+        <input type="text" class="form-control" name="population" id="population" placeholder="Enter your population">
+      </div>
+      <div class="form-group col-lg-6">
+        <label>GDP</label>
+        <input type="text" class="form-control" name="gdp" id="gdp" placeholder="Enter your GDP">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-lg-6">
+        <label>Description</label>
+        <input type="text" class="form-control" name="description" id="description" placeholder="Enter your description">
+      </div>
+      <div class="form-group col-lg-6">
+        <label>Country</label>
+        <select class="form-control" name="country" id="country_id" value="">
+          <option value="">Choose country</option>
+          <option th:each="country : ${countries}" th:value="${country.country_id}" th:text="${country.country_name}"></option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" type="button" id="addCity">Create City</button>
+  </div>
+</form>
+
+<div class="container" id="abc">
+  <table class="table table-hover" id="cityList">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Country</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+      <th:block th:each="city : ${cities}">
+        <tr th:id="'row'+${city.city_id}">
+          <td th:text="${city.city_id}"></td>
+          <td th:text="${city.city_name}"></td>
+          <td th:if="${city.country}" th:text="${city.country.country_name}"></td>
+          <td th:unless="${city.country}"></td>
+          <td>
+            <button th:value="${city.city_id}" class="btn btn-outline-primary mr-2 edit-button" ><i class="far fa-edit"></i>Edit</button>
+            <button th:value="${city.city_id}" class="btn btn-outline-danger delete-button" ><i class="fas fa-trash-alt"></i>Delete</button>
+          </td>
+        </tr>
+      </th:block>
+    </tbody>
+  </table>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Edit City</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-city">
+          <fieldset class="row g-3">
+            <div>
+              <input type="text" hidden class="form-control" id="upID" name="upID" value="">
+            </div>
+            <div class="col-md-6">
+              <label for="upName" class="form-label">City name</label>
+              <input type="text" class="form-control" id="upName" name="upName" value="">
+            </div>
+            <div class="col-md-6">
+              <label for="upAcreage" class="form-label">Acreage</label>
+              <input type="number" class="form-control" id="upAcreage" name="upAcreage" value="">
+            </div>
+            <div class="col-md-6">
+              <label for="upPopulation" class="form-label">Population</label>
+              <input type="number" class="form-control" id="upPopulation" name="upPopulation" value="">
+            </div>
+            <div class="col-md-6">
+              <label for="upGDP" class="form-label">GDP</label>
+              <input type="number" class="form-control" id="upGDP" name="upGDP" value="">
+            </div>
+            <div class="col-md-6">
+              <label for="upDescription" class="form-label">Description</label>
+              <input type="text" class="form-control" id="upDescription" name="upDescription" value="">
+            </div>
+            <div class="col-md-6">
+              <label>Country</label>
+              <select class="form-control" name="upCountry" id="upCountry" value="">
+                <option value="">Choose country</option>
+                <option th:each="p : ${countries}" th:value="${p.country_id}" th:text="${p.country_name}"></option>
+              </select>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary dismiss-modal" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary save-city">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+<script>
+  function createCity(){
+    let city_name = $("#name").val();
+    let acreage = $("#acreage").val();
+    let population = $("#population").val();
+    let gdp = $("#gdp").val();
+    let description = $("#description").val();
+    let country = $("#country_id").val();
+    console.log(country);
+    let newCountry = {
+      country_id : country
+    }
+
+    let newCity = {
+      city_name:city_name,
+      acreage:acreage,
+      population:population,
+      gdp:gdp,
+      description:description,
+      country:newCountry
+    }
+    console.log(newCity);
+      $.ajax({
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        type: "POST",
+        data: JSON.stringify(newCity),
+        url: "/cities/create-city",
+        success:function (city){
+          $('#cityList tbody').append(`<tr id="row${city.city_id}">
+                        <td>${city.city_id}</td>
+                        <td>${city.city_name}</td>
+                        <td>${city.country.country_name}</td>
+                        <td>
+                          <button value="${city.city_id}" class="btn btn-outline-primary mr-2 edit-button" ><i class="far fa-edit"></i>Edit</button>
+                          <button value="${city.city_id}" class="btn btn-outline-danger delete-button" ><i class="fas fa-trash-alt"></i>Delete</button>
+                        </td>
+                    </tr>`);
+          $(".edit-button").on("click",editCity);
+          $(".delete-button").on("click",deleteConfirm);
+          $("#addNewCity")[0].reset();
+        }
+      });
+  }
+
+  $("#addCity").on("click",createCity);
+
+  function editCity(){
+    let cityId = $(this).attr("value");
+    console.log(cityId);
+    $.ajax({
+      type: "GET",
+      url: `/cities/edit-city/${cityId}`,
+      success:function (city){
+        console.log(city);
+        $('#upID').val(city.city_id);
+        $('#upName').val(city.city_name);
+        $('#upAcreage').val(city.acreage);
+        $('#upPopulation').val(city.population);
+        $('#upGDP').val(city.gdp);
+        $('#upDescription').val(city.description);
+        $('#upCountry').val(city.country.country_id);
+        $('#editModal').modal('show');
+
+      }})
+  }
+
+  function saveCity(){
+    let city_id = $("#upID").val();
+    let city_name = $("#upName").val();
+    let acreage = $("#upAcreage").val();
+    let population = $("#upPopulation").val();
+    let gdp = $("#upGDP").val();
+    let description = $("#upDescription").val();
+    let country = $("#upCountry").val();
+    let newCountry = {
+      country_id : country
+    }
+
+    let city = {
+      city_id: city_id,
+      city_name: city_name,
+      acreage: acreage,
+      population: population,
+      gdp: gdp,
+      description:description,
+      country: newCountry
+    }
+
+    $.ajax({
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      type: "PUT",
+      data: JSON.stringify(city),
+      url: `/cities/edit/${city_id}`,
+      success: function (city) {
+        $('#row'+city_id+ ' td').remove();
+        $('#row'+city_id).html(`
+                        <td>${city.city_id}</td>
+                        <td>${city.city_name}</td>
+                        <td>${city.country.country_name}</td>
+                        <td>
+                          <button value="${city.city_id}" class="btn btn-outline-primary mr-2 edit-button" ><i class="far fa-edit"></i>Edit</button>
+                          <button value="${city.city_id}" class="btn btn-outline-danger delete-button" ><i class="fas fa-trash-alt"></i>Delete</button>
+                        </td>`
+        );
+        $(".edit-button").on("click",editCity);
+        $(".delete-button").on("click",deleteConfirm);
+        $('#editModal').modal("hide");
+        $("#edit-city")[0].reset();
+      }
+    })
+  }
+
+  function deleteConfirm() {
+    let cityId = $(this).attr("value");
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showDenyButton: true,
+      confirmButtonColor: '#3085d6',
+      denyButtonColor: '#d33',
+      denyButtonText :`Cancel`,
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        //Gọi ajax
+        $.ajax({
+          type: "DELETE",
+          //tên API
+          url: `/cities/${cityId}`,
+          //xử lý khi thành công
+          success: function () {
+            $("#row" + cityId).remove();
+          Swal.fire(
+                  'Delete!',
+                  'Your file has been delete.',
+                  'success'
+          )
+          }
+        })
+      }
+    })
+  }
+
+  $(".edit-button").on("click",editCity);
+  $(".save-city").on("click",saveCity);
+  $(".delete-button").on("click",deleteConfirm);
+</script>
+
+<script>
+    $(document).ready(function() {
+
+    //Khi bàn phím được nhấn và thả ra thì sẽ chạy phương thức này
+    $("#addNewCity").validate({
+      rules: {
+        name: "required",
+        country: "required",
+        acreage: {
+          required: true,
+          number:true
+        },
+        population: {
+          required: true,
+          number:true
+        },
+        gdp: {
+          required: true,
+          number:true
+        },
+        description: {
+          required: true,
+          minlength: 2
+        },
+      },
+      messages: {
+        name: "Please enter city name!",
+        country: "Please select country!",
+        acreage: {
+          required: "Please enter the city area!",
+          number: "Please enter only number!"
+        },
+        population: {
+          required: "Please enter the population of the city!",
+          number: "Please enter only number!"
+        },
+        gdp: {
+          required: "Please enter the GDP of the city!",
+          number: "Please enter only number!"
+        },
+
+        description: {
+          required: "Please describe some details about the city!",
+          minlength: "Please enter at least 2 characters"
+        }
+      }
+    });
+  });
+
+</script>
+
+</html>

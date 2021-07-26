@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="application/json; charset=UTF-8"/>
+    <title>Customer Information</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script th:src="@{/js/sweetalert2.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/sweetalert2.min.css}">
+    <script src="https://cdn.jsdelivr.net/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        #abc{
+            margin-top: 30px;
+        }
+        .error{
+            color: red;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<h2 class="container"><a href="/cities">Back to list city</a></h2>
+<form th:action="@{/create-city}" th:object="${city}" method="post" id="formCreate">
+    <div class="container">
+        <h1>Create city</h1>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <label>City name</label>
+                <input type="text" class="form-control" th:field="*{city_name}" placeholder="Enter your city name" >
+            </div>
+            <div class="form-group col-lg-6">
+                <label>Country</label>
+                <select class="form-control" th:field="*{country}" >
+                    <option value="">Choose country</option>
+                    <option th:each="p : ${countries}" th:value="${p.country_id}" th:text="${p.country_name}"></option>
+                </select>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <label>Acreage</label>
+                <input type="text" class="form-control" th:field="*{acreage}" placeholder="Enter your area" >
+            </div>
+            <div class="form-group col-lg-6">
+                <label>Population</label>
+                <input type="text" class="form-control" th:field="*{population}" placeholder="Enter your population" >
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <label>GDP </label>
+                <input type="text" class="form-control" th:field="*{gdp}" placeholder="Enter your GDP" >
+            </div>
+            <div class="form-group col-lg-6">
+                <label>Description </label>
+                <textarea type="text" class="form-control" th:field="*{description}" placeholder="Enter your description" ></textarea>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Create City</button>
+    </div>
+</form>
+
+<script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+
+        //Khi bàn phím được nhấn và thả ra thì sẽ chạy phương thức này
+        $("#formCreate").validate({
+            rules: {
+                city_name: "required",
+                country: "required",
+                acreage: {
+                    required: true,
+                    number:true
+                },
+                population: {
+                    required: true,
+                    number:true
+                },
+                gdp: {
+                    required: true,
+                    number:true
+                },
+                description: {
+                    required: true,
+                    minlength: 2
+                },
+            },
+            messages: {
+                city_name: "Please enter city name!",
+                country: "Please select country!",
+                acreage: {
+                    required: "Please enter the city area!",
+                    number: "Please enter only number!"
+                },
+                population: {
+                    required: "Please enter the population of the city!",
+                    number: "Please enter only number!"
+                },
+                gdp: {
+                    required: "Please enter the GDP of the city!",
+                    number: "Please enter only number!"
+                },
+
+                description: {
+                    required: "Please describe some details about the city!",
+                    minlength: "Please enter at least 2 characters"
+                }
+            }
+        });
+    });
+
+</script>
+
+
+</html>
